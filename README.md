@@ -51,9 +51,11 @@ run the file "fakemake" in c-wrapper directory, some variables such as JDK_HOME 
  
 #Compiling Java and clojure code
  
-Java: run "lein javac" in lein-native directory
-Clojure: run "lein compile" in lein-native directory
-or
+####Java: 
+run "lein javac" in lein-native directory
+####Clojure: 
+run "lein compile" in lein-native directory
+####or
 run "lein run" in lein-native directory to compile both and run the app
 
 
