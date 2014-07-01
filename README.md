@@ -13,29 +13,29 @@ The c code in this example uses ncurses to act as a viewlayer for the command li
  
 #Project layout
  
-|--/c-wrapper ---- contains the c and java source code
-|  |--fakemake ---- script to compile c code; Change variable JDK_HOME as needed to compile on other machines
-|  |--/native
-|  |  `--/linux
-|  |     `--/x86_64
-|  |       `--libMyNative.so ---- Java requires native libaries be named in this format (extension will vary by OS)
-|  `--/src
-|     |--/native
-|     |  `--/linux
-|     |     `--/x86_64
-|     |        `--MyNative.c
-|     |        `--MyNative.h
-|     `--/java
-|        `--MyNative.java ---- in package com.test even though src folder doesn't reflect that
-|
-|--/lein-native
-|  |--/doc
-|  |--/resources
-|  `--/src
-|     |--/java ---- link to c-wrapper/src/java
-|     |--/lein_native ---- clojure code
-|     |  `--core.clj ---- the clojure code, contains the main method, imports the java code and dynamically loads the native shared library
-|     `--native ---- link to c-wrapper/src/native
+|--/c-wrapper ---- contains the c and java source code<br>
+|  |--fakemake ---- script to compile c code; Change variable JDK_HOME as needed to compile on other machines<br>
+|  |--/native<br>
+|  |  `--/linux<br>
+|  |     `--/x86_64<br>
+|  |       `--libMyNative.so ---- Java requires native libaries be named in this format (extension will vary by OS)<br>
+|  `--/src<br>
+|     |--/native<br>
+|     |  `--/linux<br>
+|     |     `--/x86_64<br>
+|     |        `--MyNative.c<br>
+|     |        `--MyNative.h<br>
+|     `--/java<br>
+|        `--MyNative.java ---- in package com.test even though src folder doesn't reflect that<br>
+|<br>
+|--/lein-native<br>
+|  |--/doc<br>
+|  |--/resources<br>
+|  `--/src<br>
+|     |--/java ---- link to c-wrapper/src/java<br>
+|     |--/lein_native ---- clojure code<br>
+|     |  `--core.clj ---- the clojure code, contains the main method, imports the java code and dynamically loads the native shared library<br>
+|     `--native ---- link to c-wrapper/src/native<br>
 
  
 #Running the project
