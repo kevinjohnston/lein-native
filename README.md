@@ -1,5 +1,4 @@
 lein-native
- =
 
 Example of using native code and ncurses in clojure with a leiningen project.
 
@@ -60,12 +59,13 @@ run "lein run" in lein-native directory to compile both and run the app
  
 #Dependencies
  
-Name    (Version)       Notes
-ncurses (5.9)           needed to compile c code
-lein    (2.3.4)
-clojure (1.6)
-JDK     (1.7)
-g++     (4.9)
-debian  (7.2)
+Name    |(Version)      | Notes
+:--------|:---------------|:-----------
+ncurses |(5.9)          | needed to compile c code
+lein    |(2.3.4)        |  
+clojure |(1.6)          | 
+JDK     |(1.7)          |
+g++     |(4.9)          | 
+debian  |(7.2)          | 
 
 These are versions I'm using, earlier versions for some/all will work.
