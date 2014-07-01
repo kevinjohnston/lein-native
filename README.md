@@ -12,7 +12,8 @@ The c code in this example uses ncurses to act as a viewlayer for the command li
 
  
 #Project layout
- 
+
+``` 
 |--/c-wrapper ---- contains the c and java source code<br>
 |  |--fakemake ---- script to compile c code; Change variable JDK_HOME as needed to compile on other machines<br>
 |  |--/native<br>
@@ -36,7 +37,7 @@ The c code in this example uses ncurses to act as a viewlayer for the command li
 |     |--/lein_native ---- clojure code<br>
 |     |  `--core.clj ---- the clojure code, contains the main method, imports the java code and dynamically loads the native shared library<br>
 |     `--native ---- link to c-wrapper/src/native<br>
-
+```
  
 #Running the project
  
