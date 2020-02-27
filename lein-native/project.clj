@@ -1,8 +1,10 @@
 (defproject lein-native "0.1.0-SNAPSHOT"
   :description "Test project to showcase running native code from a clojure project"
   :url "http://example.com/FIXME"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :license {:name "MIT License"
+            :url "none"
+            :year 2020
+            :key "mit"}
   :dependencies [[org.clojure/clojure "1.5.1"]]
 
   ;; this is not where leiningen expects to find native libraries for that see
@@ -29,5 +31,5 @@
   :jvm-opts ["-Djava.library.path=/target/bin/"]
 
   ;; add lein shell as dependency to hook in shell build script to lein
-  :plugins [[lein-shell "0.5.0"]]
+  :plugins [[lein-shell "0.5.0"] [lein-license "0.1.8"]]
   )
