@@ -1,5 +1,6 @@
 (ns lein-native.core
-  (:import (com.test MyNative)))
+  (:import (com.test MyNative))
+  (:gen-class))
 
 (defn -main []
   ""

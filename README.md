@@ -8,35 +8,31 @@ Example of using native code and ncurses in clojure with a leiningen project.
  
 This project shows how to use JNI to call c methods in clojure.
 This is done by creating a Java class, MyNative.java, that uses JNI to call c methods. Clojure then calls these java methods pernormal java interop.
-The c code in this example uses ncurses to act as a viewlayer for the command line, displaying a simple screen to the terminal and handling some user inputs.
+The c code in this example uses ncurses to act as a viewlayer for the command line, displaying a simple screen to the terminal and handling user input.
 
  
 #Project layout
 
 ``` 
-|--/c-wrapper ---- contains the c and java source code<br>
-|  |--build ---- script to compile c code; Change variable JAVA_HOME as needed to compile on other machines<br>
-|  |--/bin<br>
-|  |  `--/linux<br>
-|  |     `--/x86_64<br>
-|  |       `--libMyNative.so ---- Java requires native libaries be named in this format (extension will vary by OS)<br>
-|  `--/src<br>
-|     |--/native<br>
-|     |  `--/linux<br>
-|     |     `--/x86_64<br>
-|     |        `--MyNative.c<br>
-|     |        `--MyNative.h<br>
-|     `--/java<br>
-|        `--MyNative.java ---- in package com.test even though src folder doesn't reflect that<br>
-|<br>
 |--/lein-native<br>
+|  |--build ---- script to compile c code; Change variable JAVA_HOME as needed to compile on other machines<br>
 |  |--/doc<br>
 |  |--/resources<br>
-|  `--/src<br>
-|     |--/java ---- link to c-wrapper/src/java<br>
-|     |--/lein_native ---- clojure code<br>
-|     |  `--core.clj ---- the clojure code, contains the main method, imports the java code and dynamically loads the native shared library<br>
-|     `--native ---- link to c-wrapper/bin<br>
+|  |--/src<br>
+|  |  |--/java<br>
+|  |  |  `--MyNative.java ---- in package com.test<br>
+|  |  |--/lein_native ---- clojure code<br>
+|  |  |  `--core.clj ---- the clojure code, contains the main method, imports the java code and dynamically loads the native shared library<br>
+|  |  `--native ---- native source code<br>
+|  |     `--/linux<br>
+|  |        `--/x86_64<br>
+|  |           `--MyNative.c<br>
+|  |           `--MyNative.h<br>
+|  `--/target<br>
+|     `--/bin<br>
+|        `--/linux<br>
+|           `--/x86_64<br>
+|              `--libMyNative.so ---- Java requires native libaries be named in this format (extension will vary by OS)<br>
 ```
  
 #Running the project
@@ -45,8 +41,9 @@ execute "lein run" in the folder lein-native
 
  
 #Compiling C code
- 
-run the file "build" in c-wrapper directory
+
+this will automatically be built when compiling (or running) the clojure code (see below)
+this can be run manually via the file "build" in folder lein-native
 
  
 #Compiling Java and clojure code

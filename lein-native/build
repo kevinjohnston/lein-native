@@ -6,7 +6,7 @@
 OS=linux
 ARCH=x86_64
 SRC_DIR=src/native/
-BIN_DIR=bin/
+BIN_DIR=target/bin/
 SRC_PATH=${SRC_DIR}$OS/$ARCH/
 BIN_PATH=${BIN_DIR}$OS/$ARCH/
 ##### available user commands
