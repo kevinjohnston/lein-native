@@ -15,8 +15,8 @@ The c code in this example uses ncurses to act as a viewlayer for the command li
 
 ``` 
 |--/c-wrapper ---- contains the c and java source code<br>
-|  |--fakemake ---- script to compile c code; Change variable JDK_HOME as needed to compile on other machines<br>
-|  |--/native<br>
+|  |--build ---- script to compile c code; Change variable JAVA_HOME as needed to compile on other machines<br>
+|  |--/bin<br>
 |  |  `--/linux<br>
 |  |     `--/x86_64<br>
 |  |       `--libMyNative.so ---- Java requires native libaries be named in this format (extension will vary by OS)<br>
@@ -36,7 +36,7 @@ The c code in this example uses ncurses to act as a viewlayer for the command li
 |     |--/java ---- link to c-wrapper/src/java<br>
 |     |--/lein_native ---- clojure code<br>
 |     |  `--core.clj ---- the clojure code, contains the main method, imports the java code and dynamically loads the native shared library<br>
-|     `--native ---- link to c-wrapper/src/native<br>
+|     `--native ---- link to c-wrapper/bin<br>
 ```
  
 #Running the project
@@ -46,7 +46,7 @@ execute "lein run" in the folder lein-native
  
 #Compiling C code
  
-run the file "fakemake" in c-wrapper directory, some variables such as JDK_HOME will likely need to be changed
+run the file "build" in c-wrapper directory
 
  
 #Compiling Java and clojure code
@@ -71,4 +71,4 @@ JDK     |(1.7)          |
 g++     |(4.9)          | 
 debian  |(7.2)          | 
 
-These are versions I'm using, earlier versions for some/all will work.
+These are versions I'm using, earlier/later versions for some/all will work.
