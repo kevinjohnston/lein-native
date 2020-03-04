@@ -1,145 +1,188 @@
 #include "MyNative.h"
 
-WINDOW *wMainScreen;
-WINDOW *wTestScreen;
-
 /**
- * initialize main window
+ * Initialize main window
  */
-void initScreenMain()
+void initMain()
 {
-  SCREENHEIGHT = LINES;//Use number of lines detected by ncurses
-  SCREENWIDTH = COLS;//Use number of cols detected by ncurses
+  // Use lines and columns detected by ncurses
+  SCREENHEIGHT = LINES;
+  SCREENWIDTH = COLS;
 
-  IMAGEHEIGHT = 14;//Number of lines used by the test screen
-  IMAGEWIDTH = 38;//Number of cols used by the test screen
+  IMAGEHEIGHT = 14;
+  IMAGEWIDTH = 38;
 
-  testX = (SCREENWIDTH / 2) - (IMAGEWIDTH / 2); //x position for test screen
-  testY = (SCREENHEIGHT / 2) - (IMAGEHEIGHT / 2); //y position for test screen
+  // top left x and y positions for text to display
+  X = (SCREENWIDTH / 2) - (IMAGEWIDTH / 2);
+  Y = (SCREENHEIGHT / 2) - (IMAGEHEIGHT / 2);
 
-  wMainScreen = newwin(SCREENHEIGHT, SCREENWIDTH, 0, 0);	// new window (height, width, x y)
-  wclear(wMainScreen);						// clear window
+  // new window (height, width, x y)
+  wMain = newwin(SCREENHEIGHT, SCREENWIDTH, 0, 0);
 
-  mvwin(wMainScreen, 0, 0);					// move window
+  // clear window
+  wclear(wMain);
+
+  // move window
+  mvwin(wMain, 0, 0);
 }
 
 /**
- * initialize test graphic
+ * Initialize example text
  */
-void initScreenTest()
+void initNext()
 {
-  wTestScreen = newpad(IMAGEHEIGHT, IMAGEWIDTH);
-  resetScreenTest(DEFAULT_COLOR);
+  wNext = newpad(IMAGEHEIGHT, IMAGEWIDTH);
+  resetPadNext(DEFAULT_COLOR);
+}
+
+/**
+ * Example signal handler
+ */
+void finish(int signal)
+{
+  endwin();
 }
 
 /**
  * Copy pads to the main window.
  */
 void copyPads(){
-  copywin(wTestScreen, wMainScreen, 0, 0, testY, testX, testY + IMAGEHEIGHT - 1, testX + IMAGEWIDTH - 1, 0);
+  // since the displayed view is not decomposed into multiple sections only
+  // one copy needs to be made, for more complicated screens multiple sections
+  // would be copied over here
+  copywin(wNext, wMain, 0, 0, Y, X, Y + IMAGEHEIGHT - 1, X + IMAGEWIDTH - 1, 0);
 }
 
 /**
- * Resets the test pad
+ * Resets the pad used to draw the next main screen
  */
-void resetScreenTest(int testColor)
+void resetPadNext(int textColor)
 {
-  wclear(wTestScreen);
-  wattrset(wTestScreen, COLOR_PAIR(testColor));
-  //blank lines cause mangling by ncurses in some cases, not sure why, workaround by using ------ instead
-  waddstr(wTestScreen, "--------------------------------------");
-  waddstr(wTestScreen, " ##      ####  ######  ###### ##   ## ");
-  waddstr(wTestScreen, " ##     ##  ## ##   ## ##     ####### ");
-  waddstr(wTestScreen, " ##     ##  ## ######  #####  ## # ## ");
-  waddstr(wTestScreen, " ##     ##  ## ##  ##  ##     ##   ## ");
-  waddstr(wTestScreen, " ######  ####  ##   ## ###### ##   ## ");
-  waddstr(wTestScreen, "--------------------------------------");
-  waddstr(wTestScreen, " ###### ######  ###### ##  ## ##   ## ");
-  waddstr(wTestScreen, "   ##   ##   ## ##     ##  ## ####### ");
-  waddstr(wTestScreen, "   ##   ######  ###### ##  ## ## # ## ");
-  waddstr(wTestScreen, "   ##   ##          ## ###### ##   ## ");
-  waddstr(wTestScreen, " ###### ##      ######  ####  ##   ## ");
-  waddstr(wTestScreen, "--------------------------------------");
-  waddstr(wTestScreen, " Enter 1-7 to change colors, q to exit");
-  wclear(wMainScreen);
-  copywin(wTestScreen, wMainScreen, 0, 0, testY, testX, testY + IMAGEHEIGHT - 1, testX + IMAGEWIDTH - 1, 0);
+  wclear(wNext);
+  wattrset(wNext, COLOR_PAIR(textColor));
+  // blank lines cause mangling by ncurses in some cases, not sure why,
+  // workaround by using ------ instead
+  waddstr(wNext, "--------------------------------------");
+  waddstr(wNext, " ##      ####  ######  ###### ##   ## ");
+  waddstr(wNext, " ##     ##  ## ##   ## ##     ####### ");
+  waddstr(wNext, " ##     ##  ## ######  #####  ## # ## ");
+  waddstr(wNext, " ##     ##  ## ##  ##  ##     ##   ## ");
+  waddstr(wNext, " ######  ####  ##   ## ###### ##   ## ");
+  waddstr(wNext, "--------------------------------------");
+  waddstr(wNext, " ###### ######  ###### ##  ## ##   ## ");
+  waddstr(wNext, "   ##   ##   ## ##     ##  ## ####### ");
+  waddstr(wNext, "   ##   ######  ###### ##  ## ## # ## ");
+  waddstr(wNext, "   ##   ##          ## ###### ##   ## ");
+  waddstr(wNext, " ###### ##      ######  ####  ##   ## ");
+  waddstr(wNext, "--------------------------------------");
+  waddstr(wNext, " Enter 1-7 to change colors, q to exit");
 }
 
-JNIEXPORT void JNICALL Java_com_test_MyNative_setupNative(JNIEnv *env, jobject javaobj)
+
+void refreshScreens(int clear)
+{
+  // clear everything on the screen
+  if (clear > 0)
+    wclear(wMain);
+
+  copyPads();
+
+  // move the cursor position
+  wmove(wMain, SCREENHEIGHT - 1, 0);
+
+  ///// refresh everything
+  // refresh the pad (not actually necessary)
+  //prefresh(wNext, 0, 0, Y, X, Y + IMAGEHEIGHT - 1, X + IMAGEWIDTH - 1);
+  // refresh the window
+  wrefresh(wMain);
+}
+
+JNIEXPORT void JNICALL Java_com_example_MyNative_setupNative(JNIEnv *env, jobject javaobj)
 {
   graphicEngineInit();
 }
 
 /**
- * Example of overloaded method syntax, this method simply refreshes the screen
+ * Example of overloaded method syntax.
+ * This method refreshes the screen.
  */
-JNIEXPORT void JNICALL Java_com_test_MyNative_refresh__(JNIEnv *env, jobject javaobj)
+JNIEXPORT void JNICALL Java_com_example_MyNative_refresh__(JNIEnv *env, jobject javaobj)
 {
-  //refresh everything
-  prefresh(wTestScreen, 0, 0, testY, testX, testY + IMAGEHEIGHT - 1, testX + IMAGEWIDTH - 1); //refresh the pad
-  wrefresh(wMainScreen); //refresh the window
+  refreshScreens(0);
 }
 
 /**
- * Example of overloaded method syntax, with an int parameter, this method completely clears the screen before refreshing
+ * Example of overloaded method syntax with an int parameter.
+ * This method completely clears the screen before refreshing.
  */
-JNIEXPORT void JNICALL Java_com_test_MyNative_refresh__I(JNIEnv *env, jobject javaobj, int col)
+JNIEXPORT void JNICALL Java_com_example_MyNative_refresh__I(JNIEnv *env,
+                                                            jobject javaobj,
+                                                            int clear)
 {
-  //clear everything on the screen
-  wclear(wMainScreen);
-  //copy the pads back onto the screen
-  copyPads();
-  //refresh everything
-  prefresh(wTestScreen, 0, 0, testY, testX, testY + IMAGEHEIGHT - 1, testX + IMAGEWIDTH - 1); //refresh the pad
-  wrefresh(wMainScreen); //refresh the window
+  refreshScreens(clear);
 }
 
 /**
  * Cleanup ncurses. reset command may still be needed for some terminals
  */
-JNIEXPORT void JNICALL Java_com_test_MyNative_finish(JNIEnv *env, jobject javaobj)
+JNIEXPORT void JNICALL Java_com_example_MyNative_finish(JNIEnv *env,
+                                                        jobject javaobj)
 {
-  endwin();	// <curses.h> reset terminal into proper non-visual mode
+  endwin(); // reset terminal into proper non-visual mode
 }
 
 /**
  * Reads input from keyboard and returns it
  */
-JNIEXPORT int JNICALL Java_com_test_MyNative_readInput(JNIEnv *env, jobject javaobj)
+JNIEXPORT int JNICALL Java_com_example_MyNative_readInput(JNIEnv *env,
+                                                          jobject javaobj)
 {
-  //Keep cursor in same location
-  wmove(wMainScreen, SCREENHEIGHT - 1, testX);
-  //return input
+  // Keep cursor in same location
+  wmove(wMain, SCREENHEIGHT - 1, X);
+  // return input
   return getch();
 }
 
-JNIEXPORT void JNICALL Java_com_test_MyNative_resetScreenTest(JNIEnv *env, jobject javaobj, int testColor)
+JNIEXPORT void JNICALL Java_com_example_MyNative_changeColor(JNIEnv *env,
+                                                             jobject javaobj,
+                                                             int textColor)
 {
-  //change the test screen
-  resetScreenTest(testColor);
+  // change the next pad
+  resetPadNext(textColor);
+  refreshScreens(1);
 }
 
 /**
- * Initialize n_courses
+ * Initialize n_curses, set callbacks, and setup initial screens
  */
 void graphicEngineInit()
 {
-  //(void) signal(SIGINT, finish);	// <signal.h> on signal "SIGINT" call method "finish"
-  (void) initscr();		// <curses.h> do initialization work
-  keypad(stdscr, TRUE);		// <curses.h> enable keypad for input
-  (void) nonl();			// <curses.h> disable translation return/ newline for detection of return key
-  (void) cbreak();		// <curses.h> do not buffer typed characters, use at once
-  (void) noecho();		// <curses.h> do not echo typed characters
-  start_color();			// <curses.h> use colors
-  init_pair(RED, COLOR_RED, COLOR_BLACK);		// <curses.h> define color-pair
-  init_pair(GREEN, COLOR_GREEN, COLOR_BLACK);	// <curses.h> define color-pair
-  init_pair(YELLOW, COLOR_YELLOW, COLOR_BLACK);	// <curses.h> define color-pair
-  init_pair(BLUE, COLOR_BLUE, COLOR_BLACK);	// <curses.h> define color-pair
-  init_pair(CYAN, COLOR_CYAN, COLOR_BLACK);	// <curses.h> define color-pair
-  init_pair(MAGENTA, COLOR_MAGENTA, COLOR_BLACK);	// <curses.h> define color-pair
-  init_pair(WHITE, COLOR_WHITE, COLOR_BLACK);	// <curses.h> define color-pair
+  // signal callbacks
+  (void) signal(SIGINT, finish); // on signal "SIGINT" call method "finish"
 
-  initScreenMain();
-  initScreenTest();
-  redrawwin(wMainScreen); // needed to display graphics properly at startup on some terminals
+  // configuration via ncurses api, see <curses.h>
+  (void) initscr();      // do initialization work
+  keypad(stdscr, TRUE);  // enable keypad for input
+  (void) nonl();         // disable translation return/ newline for detection of return key
+  (void) cbreak();       // do not buffer typed characters, use at once
+  (void) noecho();       // do not echo typed characters
+  start_color();         // use colors
+
+  // use ncurses api to define color-pairs
+  // e.g. associate RED with forground RED and background BLACK
+  init_pair(RED, COLOR_RED, COLOR_BLACK);
+  init_pair(GREEN, COLOR_GREEN, COLOR_BLACK);
+  init_pair(YELLOW, COLOR_YELLOW, COLOR_BLACK);
+  init_pair(BLUE, COLOR_BLUE, COLOR_BLACK);
+  init_pair(CYAN, COLOR_CYAN, COLOR_BLACK);
+  init_pair(MAGENTA, COLOR_MAGENTA, COLOR_BLACK);
+  init_pair(WHITE, COLOR_WHITE, COLOR_BLACK);
+
+  // setup screens
+  initMain();
+  initNext();
+  refreshScreens(0);
+
+  // needed to display graphics properly at startup on some terminals
+  redrawwin(wMain);
 }

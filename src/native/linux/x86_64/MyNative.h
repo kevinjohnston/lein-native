@@ -1,5 +1,6 @@
 #include <ncurses.h> //used to display information to terminal
 #include <jni.h> //Java Native Interface header
+#include <signal.h> //Java Native Interface header
 
 #define RED 1
 #define GREEN 2
@@ -9,15 +10,22 @@
 #define MAGENTA 6
 #define WHITE 7
 
-#define DEFAULT_COLOR 4
+#define DEFAULT_COLOR BLUE
+
+#define SIGINT 2
 
 int SCREENHEIGHT;
 int SCREENWIDTH;
 int IMAGEHEIGHT;
 int IMAGEWIDTH;
 
-int testX;
-int testY;
+int X;
+int Y;
+
+// the screen a user will see
+WINDOW *wMain;
+// the pad text can be drawn to in preparation for displaying to the user
+WINDOW *wNext;
 
 /* Header for class MyNative */
 
@@ -27,16 +35,18 @@ int testY;
 extern "C" {
 #endif
 
-  void initScreenMain();
-  void initScreenTest();
+  void initMain();
+  void initNext();
   void copyPads();
-  void resetScreenTest(int);
-  JNIEXPORT void JNICALL Java_com_test_MyNative_setupNative(JNIEnv *, jobject);
-  JNIEXPORT void JNICALL Java_com_test_MyNative_refresh__(JNIEnv *, jobject);
-  JNIEXPORT void JNICALL Java_com_test_MyNative_refresh__I(JNIEnv *, jobject, int);
-  JNIEXPORT void JNICALL Java_com_test_MyNative_finish(JNIEnv *, jobject);
-  JNIEXPORT int JNICALL Java_com_test_MyNative_readInput(JNIEnv *, jobject);
-  JNIEXPORT void JNICALL Java_com_test_MyNative_resetScreenTest(JNIEnv *, jobject, int);
+  void finish();
+  void resetPadNext(int);
+  void refreshScreens(int);
+  JNIEXPORT void JNICALL Java_com_example_MyNative_setupNative(JNIEnv *, jobject);
+  JNIEXPORT void JNICALL Java_com_example_MyNative_refresh__(JNIEnv *, jobject);
+  JNIEXPORT void JNICALL Java_com_example_MyNative_refresh__I(JNIEnv *, jobject, int);
+  JNIEXPORT void JNICALL Java_com_example_MyNative_finish(JNIEnv *, jobject);
+  JNIEXPORT int  JNICALL Java_com_example_MyNative_readInput(JNIEnv *, jobject);
+  JNIEXPORT void JNICALL Java_com_example_MyNative_changeColor(JNIEnv *, jobject, int);
   void graphicEngineInit();
 
 #ifdef __cplusplus

@@ -1,8 +1,5 @@
 /target
-*/classes
-*/checkouts
-pom.xml
-pom.xml.asc
+pom.*
 *.jar
 *.class
 /.lein-*

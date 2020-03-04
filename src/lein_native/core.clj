@@ -1,15 +1,16 @@
 (ns lein-native.core
-  (:import (com.test MyNative))
+  (:import (com.example MyNative))
   (:gen-class))
 
 (defn -main []
   ""
-  ;;Load the library libMyNative.so from somewhere on the java library path above.
+  ;; Load the library libMyNative.so from somewhere on the java library path.
   (clojure.lang.RT/loadLibrary "MyNative")
 
-  (let [view-wrapper (com.test.MyNative/getSingleton) ;;create java object as our view
+  (let [;; create java object as our view
+        view-wrapper (com.example.MyNative/getSingleton)
         ]
-    (doto view-wrapper (.start)) ;;start the view layer to display and accept user input
+    ;; start the view layer to display and accept user input
+    (doto view-wrapper (.start))
     ;;...do other clojure things...
-    )
-  )
+    ))
